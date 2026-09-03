@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-export default function ListarUsuarios() {
-    const [usuarios, setUsuarios] = useState([])
+export default function StatusAPI() {
+    const [itens, setItens] = useState([])
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(null)
 
@@ -13,15 +13,18 @@ export default function ListarUsuarios() {
             try {
                 setCarregando(true)
                 setErro(null)
-                const resp = await fetch('https://jsonplaceholder.typicode.com/users', { signal })
-                if (!resp.ok) {
-                    throw new Error(`HTTP ${resp.status} — ${resp.statusText}`)
-                }
 
-              
+                
+                const resp = await fetch('https://jsonplaceholder.typicode.com/users', { signal })
+
+               
+
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+
+               
                 const data = await resp.json()
 
-                setUsuarios(data)
+                setItens(data)
             } catch (e) {
                 if (e.name !== 'AbortError') {
                     setErro(e.message)
@@ -30,20 +33,14 @@ export default function ListarUsuarios() {
                 setCarregando(false)
             }
         }
-        buscar()
 
+        buscar()
         return () => controle.abort()
     }, [])
 
     if (carregando) return <p>Carregando...</p>
     if (erro) return <p>Erro: {erro}</p>
-    if (usuarios.length === 0) return <p>Nenhum usuário encontrado.</p>
+    if (itens.length === 0) return <p>Nenhum item encontrado.</p>
 
-    return (
-        <ul>
-            {usuarios.map(u => (
-                <li key={u.id}>{u.name}</li>
-            ))}
-        </ul>
-    )
+    return <p>Sucesso: {itens.length} itens carregados.</p>
 }
